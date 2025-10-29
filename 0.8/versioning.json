@@ -6,7 +6,8 @@
       "name": "XoXoComics",
       "author": "Private Extension",
       "desc": "Extension for XoXoComics (Private Use Only)",
-      "website": "https://xoxocomic.com",
+      "website": "https://github.com/presdec/XoXoComics",
+      "contentRating": "MATURE",
       "version": "1.0.0",
       "icon": "icon.png",
       "tags": [
@@ -16,8 +17,11 @@
         }
       ],
       "websiteBaseURL": "https://xoxocomic.com",
-      "repo": "https://github.com/presdec/XoXoComics",
-      "path": "0.8/XoXoComics/source.js"
+      "intents": 21
     }
-  ]
+  ],
+  "builtWith": {
+    "toolchain": "0.8.7",
+    "types": "0.8.7"
+  }
 }

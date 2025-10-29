@@ -16,7 +16,8 @@
           "type": "info"
         }
       ],
-      "websiteBaseURL": "https://xoxocomic.com"
+      "websiteBaseURL": "https://xoxocomic.com",
+      "intents": 21
     }
   ]
 }

@@ -1,5 +1,5 @@
 // Paperback v0.6 Extension for XoXoComics
-// Basic vanilla JavaScript implementation
+// Private use extension
 
 (function() {
     'use strict';
@@ -23,7 +23,8 @@
                     text: 'Private',
                     type: 'grey'
                 }
-            ]
+            ],
+            intents: 21
         },
 
         // Helper function to make HTTP requests
@@ -32,15 +33,21 @@
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1',
                         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                         'Accept-Language': 'en-US,en;q=0.5',
                         'Referer': XOXOCOMICS_DOMAIN
                     }
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 return await response.text();
             } catch (error) {
-                throw new Error('Failed to fetch ' + url + ': ' + error);
+                console.error('Request failed for ' + url + ':', error);
+                throw error;
             }
         },
 
@@ -81,17 +88,17 @@
             const chapters = [];
             
             // Find chapter links
-            const chapterRegex = /<a[^>]*href="([^"]*\/comic\/[^\/]+\/[^"]*)"[^>]*>([^<]+)<\/a>/g;
+            const chapterRegex = /<a[^>]*href="([^"]*\/comic\/[^\/]+\/([^"\/]+))"[^>]*>([^<]+)<\/a>/g;
             let match;
             let chapterNum = 1;
             
             while ((match = chapterRegex.exec(html)) !== null) {
                 const chapterUrl = match[1];
-                const chapterTitle = match[2].trim();
+                const chapterId = match[2];
+                const chapterTitle = match[3].trim();
                 
-                // Extract chapter ID from URL
-                const chapterIdMatch = chapterUrl.match(/\/comic\/[^\/]+\/(.+)\/?$/);
-                const chapterId = chapterIdMatch ? chapterIdMatch[1] : 'chapter-' + chapterNum;
+                // Skip if it's not a valid chapter link
+                if (!chapterId || chapterId.length < 2) continue;
                 
                 chapters.push({
                     id: chapterId,
@@ -126,6 +133,17 @@
                 }
             }
             
+            // Fallback to regular img tags if no lazy loading found
+            if (pages.length === 0) {
+                const fallbackRegex = /<img[^>]*class="[^"]*single-page[^"]*"[^>]*src="([^"]+)"/g;
+                while ((match = fallbackRegex.exec(html)) !== null) {
+                    const imageSrc = match[1];
+                    if (imageSrc && imageSrc.indexOf('loading') === -1 && imageSrc.indexOf('placeholder') === -1) {
+                        pages.push(imageSrc);
+                    }
+                }
+            }
+
             return {
                 id: chapterId,
                 mangaId: mangaId,
@@ -145,20 +163,23 @@
             const results = [];
             
             // Find comic entries in search results
-            const comicRegex = /<article[^>]*class="[^"]*post[^"]*"[^>]*>[\s\S]*?<a[^>]*href="([^"]*\/comic\/([^\/]+)\/[^"]*)"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>[\s\S]*?<h2[^>]*>([^<]+)<\/h2>/g;
+            const comicRegex = /<article[^>]*class="[^"]*post[^"]*"[^>]*>[\s\S]*?<a[^>]*href="[^"]*\/comic\/([^\/]+)\/?"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>[\s\S]*?<h2[^>]*>([^<]+)<\/h2>/g;
             let match;
             
-            while ((match = comicRegex.exec(html)) !== null) {
-                const comicId = match[2];
-                const image = match[3];
-                const title = match[4].trim();
+            while ((match = comicRegex.exec(html)) !== null && results.length < 50) {
+                const comicId = match[1];
+                const image = match[2];
+                const title = match[3].trim();
                 
-                results.push({
-                    id: comicId,
-                    title: title,
-                    image: image,
-                    subtitle: undefined
-                });
+                // Skip duplicates
+                if (!results.find(function(r) { return r.id === comicId; })) {
+                    results.push({
+                        id: comicId,
+                        title: title,
+                        image: image,
+                        subtitle: undefined
+                    });
+                }
             }
             
             return {
@@ -174,22 +195,23 @@
                 const featured = [];
                 
                 // Find featured/recent comics on homepage
-                const comicRegex = /<article[^>]*class="[^"]*post[^"]*"[^>]*>[\s\S]*?<a[^>]*href="([^"]*\/comic\/([^\/]+)\/[^"]*)"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>[\s\S]*?<h2[^>]*>([^<]+)<\/h2>/g;
+                const comicRegex = /<article[^>]*class="[^"]*post[^"]*"[^>]*>[\s\S]*?<a[^>]*href="[^"]*\/comic\/([^\/]+)\/?"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>[\s\S]*?<h2[^>]*>([^<]+)<\/h2>/g;
                 let match;
                 
-                while ((match = comicRegex.exec(html)) !== null) {
-                    const comicId = match[2];
-                    const image = match[3];
-                    const title = match[4].trim();
+                while ((match = comicRegex.exec(html)) !== null && featured.length < 20) {
+                    const comicId = match[1];
+                    const image = match[2];
+                    const title = match[3].trim();
                     
-                    featured.push({
-                        id: comicId,
-                        title: title,
-                        image: image,
-                        subtitle: undefined
-                    });
-                    
-                    if (featured.length >= 20) break; // Limit to 20 items
+                    // Skip duplicates
+                    if (!featured.find(function(f) { return f.id === comicId; })) {
+                        featured.push({
+                            id: comicId,
+                            title: title,
+                            image: image,
+                            subtitle: undefined
+                        });
+                    }
                 }
                 
                 return [
@@ -217,6 +239,11 @@
     // Also try to export as UMD
     if (typeof define === 'function' && define.amd) {
         define(function() { return XoXoComicsSource; });
+    }
+
+    // Paperback specific export
+    if (typeof globalThis !== 'undefined') {
+        globalThis.Source = XoXoComicsSource;
     }
 
 })();
