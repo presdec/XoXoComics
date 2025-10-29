@@ -167,8 +167,8 @@
             };
         },
 
-        // Get homepage sections
-        getHomePageSections: async function(sectionCallback) {
+        // Get homepage sections - simplified for v0.6
+        getHomePageSections: async function() {
             try {
                 const html = await this.makeRequest(XOXOCOMICS_DOMAIN);
                 const featured = [];
@@ -192,16 +192,17 @@
                     if (featured.length >= 20) break; // Limit to 20 items
                 }
                 
-                const section = {
-                    id: 'featured',
-                    title: 'Featured Comics',
-                    items: featured,
-                    type: 'singleRowNormal'
-                };
-                
-                sectionCallback(section);
+                return [
+                    {
+                        id: 'featured',
+                        title: 'Featured Comics',
+                        items: featured,
+                        type: 'singleRowNormal'
+                    }
+                ];
             } catch (error) {
                 console.log('Error in getHomePageSections:', error);
+                return [];
             }
         }
     };
