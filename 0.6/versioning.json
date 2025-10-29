@@ -1,0 +1,22 @@
+{
+  "buildTime": "2024-12-15T00:00:00.000Z",
+  "sources": [
+    {
+      "id": "XoXoComics",
+      "name": "XoXoComics",
+      "author": "Prescott",
+      "desc": "Extension for reading comics from xoxocomics.com - for personal use only",
+      "website": "https://github.com/prescott/XoXoComics",
+      "contentRating": "MATURE",
+      "version": "1.0.0",
+      "icon": "icon.png",
+      "tags": [
+        {
+          "text": "Private",
+          "type": "info"
+        }
+      ],
+      "websiteBaseURL": "https://xoxocomic.com"
+    }
+  ]
+}

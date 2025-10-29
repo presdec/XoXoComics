@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XoXoComics Site Analyzer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #333;
+            border-bottom: 2px solid #007acc;
+            padding-bottom: 10px;
+        }
+        .button {
+            background: #007acc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .button:hover {
+            background: #005a99;
+        }
+        .results {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #007acc;
+        }
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 XoXoComics Site Analyzer</h1>
+        <div class="warning">
+            <strong>Instructions:</strong>
+            <ol>
+                <li>Open this HTML file in Chrome</li>
+                <li>Navigate to <strong>https://xoxocomic.com</strong> in another tab</li>
+                <li>Complete any Cloudflare challenges</li>
+                <li>Copy the analysis functions below and paste them into the browser console (F12)</li>
+                <li>Run the functions to discover selectors</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📋 Quick Analysis Functions</h2>
+        <p>Copy and paste these functions into the browser console on xoxocomic.com:</p>
+        
+        <button class="button" onclick="copyToClipboard('analyzeComics')">Copy analyzeComics()</button>
+        <button class="button" onclick="copyToClipboard('findImages')">Copy findImages()</button>
+        <button class="button" onclick="copyToClipboard('findChapters')">Copy findChapters()</button>
+        <button class="button" onclick="copyToClipboard('analyzeCurrentPage')">Copy analyzeCurrentPage()</button>
+        <button class="button" onclick="copyToClipboard('allFunctions')">Copy All Functions</button>
+
+        <div id="copyResult" class="success" style="display: none;">
+            ✅ Copied to clipboard! Paste in browser console on xoxocomic.com
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🎯 Step-by-Step Analysis Guide</h2>
+        
+        <div class="results">
+            <h3>Step 1: Homepage Analysis</h3>
+            <p>On the xoxocomic.com homepage, run:</p>
+            <div class="code">analyzeComics()</div>
+            <p>This will find all comic links and images on the homepage.</p>
+        </div>
+
+        <div class="results">
+            <h3>Step 2: Comic Page Analysis</h3>
+            <p>Click on any comic from the homepage, then run:</p>
+            <div class="code">findChapters()</div>
+            <p>This will find chapter/read buttons and comic details.</p>
+        </div>
+
+        <div class="results">
+            <h3>Step 3: Reader Page Analysis</h3>
+            <p>Click on a chapter/read button, then run:</p>
+            <div class="code">findImages()</div>
+            <p>This will find all comic page images and navigation elements.</p>
+        </div>
+
+        <div class="results">
+            <h3>Step 4: Complete Analysis</h3>
+            <p>On any page, run:</p>
+            <div class="code">analyzeCurrentPage()</div>
+            <p>This gives a comprehensive analysis of the current page structure.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📊 Manual Selector Finding</h2>
+        <p>For any element on the page:</p>
+        <ol>
+            <li>Right-click the element → "Inspect"</li>
+            <li>In the Elements tab, right-click the highlighted element</li>
+            <li>Choose "Copy" → "Copy selector"</li>
+            <li>Paste here to save: <input type="text" id="selectorInput" placeholder="Paste selector here..."></li>
+            <li><button class="button" onclick="saveSelector()">Save Selector</button></li>
+        </ol>
+        
+        <div id="savedSelectors">
+            <h3>Saved Selectors:</h3>
+            <div id="selectorsList"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📝 Extension Code Generator</h2>
+        <button class="button" onclick="generateExtensionCode()">Generate Extension Selectors</button>
+        <div id="extensionCode" class="code" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Store discovered selectors
+        let discoveredSelectors = {
+            comicLinks: [],
+            comicImages: [],
+            chapterLinks: [],
+            readerImages: [],
+            navigation: [],
+            search: []
+        };
+
+        const analysisFunctions = {
+            analyzeComics: `
+// Homepage Comic Analysis
+function analyzeComics() {
+    console.log('=== 🏠 HOMEPAGE COMIC ANALYSIS ===');
+    
+    // Find comic links
+    const comicLinks = Array.from(document.querySelectorAll('a')).filter(a => {
+        const href = a.href || '';
+        const text = a.textContent?.trim() || '';
+        return (href.includes('comic') || href.includes('read')) && 
+               text.length > 2 && 
+               !href.includes('list');
+    });
+    
+    console.log(\`Found \${comicLinks.length} comic links:\`);
+    comicLinks.slice(0, 10).forEach((link, i) => {
+        console.log(\`\${i + 1}. \${link.textContent.trim()} -> \${link.href}\`);
+        console.log(\`   Selector: \${getSelector(link)}\`);
+    });
+    
+    // Find comic images
+    const comicImages = Array.from(document.querySelectorAll('img')).filter(img => {
+        const alt = img.alt || '';
+        const src = img.src || '';
+        return alt.length > 3 && 
+               !alt.toLowerCase().includes('logo') && 
+               !src.includes('logo');
+    });
+    
+    console.log(\`\\nFound \${comicImages.length} comic images:\`);
+    comicImages.slice(0, 5).forEach((img, i) => {
+        console.log(\`\${i + 1}. \${img.alt} -> \${img.src}\`);
+        console.log(\`   Selector: \${getSelector(img)}\`);
+        console.log(\`   Data-src: \${img.getAttribute('data-src') || 'none'}\`);
+    });
+    
+    return { comicLinks: comicLinks.length, comicImages: comicImages.length };
+}
+
+function getSelector(element) {
+    if (element.id) return '#' + element.id;
+    if (element.className) {
+        const classes = element.className.split(' ').filter(c => c.length > 0);
+        if (classes.length > 0) return '.' + classes.slice(0, 2).join('.');
+    }
+    return element.tagName.toLowerCase();
+}
+`,
+
+            findImages: `
+// Reader Page Image Analysis
+function findImages() {
+    console.log('=== 📖 READER PAGE IMAGE ANALYSIS ===');
+    
+    // Find comic page images
+    const allImages = Array.from(document.querySelectorAll('img'));
+    const comicImages = allImages.filter(img => {
+        const src = img.src || '';
+        const dataSrc = img.getAttribute('data-src') || '';
+        const alt = img.alt || '';
+        
+        // Look for actual comic page images
+        return (src.length > 20 || dataSrc.length > 20) && 
+               !src.includes('logo') && 
+               !src.includes('icon') &&
+               !src.includes('avatar');
+    });
+    
+    console.log(\`Found \${comicImages.length} potential comic images:\`);
+    comicImages.forEach((img, i) => {
+        console.log(\`\${i + 1}. \${img.alt || 'No alt text'}\`);
+        console.log(\`   Src: \${img.src}\`);
+        console.log(\`   Data-src: \${img.getAttribute('data-src') || 'none'}\`);
+        console.log(\`   Class: \${img.className}\`);
+        console.log(\`   Selector: \${getSelector(img)}\`);
+        console.log(\`   Size: \${img.naturalWidth}x\${img.naturalHeight}\`);
+        console.log('');
+    });
+    
+    // Find navigation elements
+    const navigation = Array.from(document.querySelectorAll('a, button')).filter(el => {
+        const text = el.textContent?.toLowerCase() || '';
+        return text.includes('next') || text.includes('prev') || 
+               text.includes('previous') || text.includes('continue');
+    });
+    
+    console.log(\`Found \${navigation.length} navigation elements:\`);
+    navigation.forEach((nav, i) => {
+        console.log(\`\${i + 1}. \${nav.textContent.trim()} -> \${nav.href || 'button'}\`);
+        console.log(\`   Selector: \${getSelector(nav)}\`);
+    });
+    
+    return { comicImages: comicImages.length, navigation: navigation.length };
+}
+`,
+
+            findChapters: `
+// Comic Page Chapter Analysis
+function findChapters() {
+    console.log('=== 📚 COMIC PAGE CHAPTER ANALYSIS ===');
+    
+    // Find chapter/read links
+    const chapterLinks = Array.from(document.querySelectorAll('a')).filter(a => {
+        const href = a.href || '';
+        const text = a.textContent?.toLowerCase() || '';
+        return (href.includes('chapter') || href.includes('read') || href.includes('issue')) ||
+               (text.includes('chapter') || text.includes('read') || text.includes('issue'));
+    });
+    
+    console.log(\`Found \${chapterLinks.length} chapter/read links:\`);
+    chapterLinks.slice(0, 15).forEach((link, i) => {
+        console.log(\`\${i + 1}. \${link.textContent.trim()} -> \${link.href}\`);
+        console.log(\`   Selector: \${getSelector(link)}\`);
+    });
+    
+    // Find comic description/details
+    const descriptions = Array.from(document.querySelectorAll('p, div')).filter(el => {
+        const text = el.textContent?.trim() || '';
+        const className = el.className || '';
+        return text.length > 50 && 
+               (className.includes('desc') || className.includes('summary') || 
+                className.includes('info') || className.includes('about'));
+    });
+    
+    console.log(\`\\nFound \${descriptions.length} description elements:\`);
+    descriptions.slice(0, 3).forEach((desc, i) => {
+        console.log(\`\${i + 1}. \${desc.textContent.trim().substring(0, 100)}...\`);
+        console.log(\`   Selector: \${getSelector(desc)}\`);
+    });
+    
+    return { chapterLinks: chapterLinks.length, descriptions: descriptions.length };
+}
+`,
+
+            analyzeCurrentPage: `
+// Complete Page Analysis
+function analyzeCurrentPage() {
+    console.log('=== 🔍 COMPLETE PAGE ANALYSIS ===');
+    console.log(\`Page: \${document.title}\`);
+    console.log(\`URL: \${window.location.href}\`);
+    
+    // All links
+    const allLinks = Array.from(document.querySelectorAll('a')).filter(a => 
+        a.href && a.textContent?.trim().length > 2
+    );
+    console.log(\`\\nTotal links: \${allLinks.length}\`);
+    
+    // All images
+    const allImages = Array.from(document.querySelectorAll('img')).filter(img => 
+        img.src && !img.src.includes('data:image/svg')
+    );
+    console.log(\`Total images: \${allImages.length}\`);
+    
+    // Forms and inputs
+    const inputs = Array.from(document.querySelectorAll('input, textarea, select'));
+    console.log(\`\\nInput elements:\`);
+    inputs.forEach((input, i) => {
+        console.log(\`\${i + 1}. <\${input.tagName.toLowerCase()}> type="\${input.type || 'text'}" name="\${input.name || 'none'}" placeholder="\${input.placeholder || 'none'}"\`);
+        console.log(\`   Selector: \${getSelector(input)}\`);
+    });
+    
+    // Main containers
+    const containers = Array.from(document.querySelectorAll('div, section, main, article')).filter(el => {
+        const className = el.className || '';
+        const id = el.id || '';
+        return (className.length > 5 || id.length > 3) && 
+               el.children.length > 0;
+    });
+    
+    console.log(\`\\nMain containers: \${containers.length}\`);
+    containers.slice(0, 10).forEach((container, i) => {
+        console.log(\`\${i + 1}. \${getSelector(container)}\`);
+        console.log(\`   Children: \${container.children.length}, Text: \${container.textContent?.trim().substring(0, 50) || 'none'}...\`);
+    });
+    
+    return {
+        title: document.title,
+        url: window.location.href,
+        links: allLinks.length,
+        images: allImages.length,
+        inputs: inputs.length,
+        containers: containers.length
+    };
+}
+`,
+
+            allFunctions: '' // Will be populated with all functions combined
+        };
+
+        // Combine all functions
+        analysisFunctions.allFunctions = Object.values(analysisFunctions).join('\\n\\n');
+
+        function copyToClipboard(functionName) {
+            const text = analysisFunctions[functionName];
+            navigator.clipboard.writeText(text).then(() => {
+                const result = document.getElementById('copyResult');
+                result.style.display = 'block';
+                setTimeout(() => {
+                    result.style.display = 'none';
+                }, 3000);
+            });
+        }
+
+        function saveSelector() {
+            const input = document.getElementById('selectorInput');
+            const selector = input.value.trim();
+            if (selector) {
+                const list = document.getElementById('selectorsList');
+                const div = document.createElement('div');
+                div.style.padding = '5px';
+                div.style.background = '#f0f0f0';
+                div.style.margin = '5px 0';
+                div.style.borderRadius = '3px';
+                div.innerHTML = `<code>${selector}</code> <button onclick="this.parentElement.remove()">Remove</button>`;
+                list.appendChild(div);
+                input.value = '';
+            }
+        }
+
+        function generateExtensionCode() {
+            const codeDiv = document.getElementById('extensionCode');
+            const selectors = Array.from(document.querySelectorAll('#selectorsList code')).map(code => code.textContent);
+            
+            const code = `
+// Generated selectors for XoXoComics extension
+// Based on manual analysis of xoxocomic.com
+
+// Homepage selectors
+const HOMEPAGE_SELECTORS = {
+    comicLinks: [
+        ${selectors.filter(s => s.includes('a')).map(s => `'${s}'`).join(',\n        ') || "'a[href*=\"comic\"]'"}
+    ],
+    comicImages: [
+        ${selectors.filter(s => s.includes('img')).map(s => `'${s}'`).join(',\n        ') || "'img'"}
+    ]
+};
+
+// Search selectors
+const SEARCH_SELECTORS = {
+    searchInput: ${selectors.find(s => s.includes('input')) ? `'${selectors.find(s => s.includes('input'))}'` : "'input[name=\"keyword\"]'"},
+    searchForm: 'form'
+};
+
+// Update your extension with these selectors
+console.log('Copy these selectors to your XoXoComics.ts file');
+            `;
+            
+            codeDiv.textContent = code;
+            codeDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
