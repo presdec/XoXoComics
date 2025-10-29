@@ -3,38 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XoXoComics Extension Repository</title>
-    <meta http-equiv="refresh" content="0; url=./0.6/">
+    <title>XoXoComics - Paperback Extension Repository</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-width: 600px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
             margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
         }
-        a {
-            color: #007AFF;
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        .version-section {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .version-title {
+            color: #495057;
+            margin-top: 0;
+        }
+        .install-button {
+            display: inline-block;
+            background: #007bff;
+            color: white;
             text-decoration: none;
-            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            margin: 10px 10px 10px 0;
+            transition: background-color 0.2s;
         }
-        a:hover {
-            text-decoration: underline;
+        .install-button:hover {
+            background: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+        .install-button.v08 {
+            background: #28a745;
+        }
+        .install-button.v08:hover {
+            background: #1e7e34;
+        }
+        .features {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .features li {
+            padding: 5px 0;
+            border-left: 3px solid #007bff;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔄 Redirecting...</h1>
-        <p>You are being redirected to the Paperback v0.6 extension repository.</p>
-        <p>If you are not redirected automatically, <a href="./0.6/">click here</a>.</p>
+    <div class="header">
+        <h1>XoXoComics Extension</h1>
+        <p>Private Paperback Extension Repository</p>
+    </div>
+
+    <div class="warning">
+        <strong>Legal Notice:</strong> This extension is created for personal use only with proper rights to the content on xoxocomics.com. Not intended for distribution or publication.
+    </div>
+
+    <div class="version-section">
+        <h2 class="version-title">📱 Paperback v0.8.11-r1 (Recommended)</h2>
+        <p><strong>Modern version with improved features and stability</strong></p>
+        
+        <a href="paperback://addRepo?displayName=XoXoComics%20Repository%20v0.8&repoURL=https://presdec.github.io/XoXoComics/0.8/" class="install-button v08">
+            📱 Add v0.8 Repository
+        </a>
+        
+        <ul class="features">
+            <li>✅ Modern ES6+ JavaScript with classes</li>
+            <li>✅ Improved error handling and debugging</li>
+            <li>✅ Better TypeScript compatibility</li>
+            <li>✅ Enhanced search functionality</li>
+            <li>✅ Optimized performance</li>
+            <li>✅ Support for advanced features</li>
+        </ul>
+        
+        <div class="code">
+            Repository URL: https://presdec.github.io/XoXoComics/0.8/
+        </div>
+    </div>
+
+    <div class="version-section">
+        <h2 class="version-title">📱 Paperback v0.6 (Legacy)</h2>
+        <p><strong>Basic version for older Paperback installations</strong></p>
+        
+        <a href="paperback://addRepo?displayName=XoXoComics%20Repository%20v0.6&repoURL=https://presdec.github.io/XoXoComics/0.6/" class="install-button">
+            � Add v0.6 Repository
+        </a>
+        
+        <ul class="features">
+            <li>✅ Basic functionality</li>
+            <li>✅ Comic reading support</li>
+            <li>✅ Search functionality</li>
+            <li>⚠️ Limited error handling</li>
+            <li>⚠️ Older JavaScript syntax</li>
+        </ul>
+        
+        <div class="code">
+            Repository URL: https://presdec.github.io/XoXoComics/0.6/
+        </div>
+    </div>
+
+    <h2>📖 How to Install</h2>
+    <ol>
+        <li>Choose the version that matches your Paperback app</li>
+        <li>Tap the "Add Repository" button above (opens Paperback)</li>
+        <li>Or manually add the repository URL in Paperback settings</li>
+        <li>Install the XoXoComics extension</li>
+        <li>Start reading comics!</li>
+    </ol>
+
+    <h2>🔧 Features</h2>
+    <ul class="features">
+        <li>🔍 Search comics by title</li>
+        <li>📚 Browse comic details and chapters</li>
+        <li>📖 Read comics with optimized image loading</li>
+        <li>🏠 Discover featured comics on homepage</li>
+        <li>📱 Mobile-optimized interface</li>
+        <li>🔒 Private use extension</li>
+    </ul>
+
+    <h2>🛠️ Troubleshooting</h2>
+    <ul>
+        <li><strong>Extension not loading?</strong> Try reloading the extension in Paperback settings</li>
+        <li><strong>Comics not displaying?</strong> Check your internet connection and try again</li>
+        <li><strong>Search not working?</strong> Make sure you're using the correct version for your Paperback app</li>
+    </ul>
+
+    <div style="text-align: center; margin-top: 40px; color: #6c757d;">
+        <p>📄 Source code available on <a href="https://github.com/presdec/XoXoComics">GitHub</a></p>
+        <p><small>For personal use only • Not for distribution</small></p>
     </div>
 </body>
 </html>
